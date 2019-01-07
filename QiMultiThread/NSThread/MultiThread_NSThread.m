@@ -36,7 +36,7 @@
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.frame = CGRectMake(15, CGRectGetMaxY(_imgView.frame) + 30, size.width - 15 * 2, 45);
-    [button setTitle:@"加载图片" forState:UIControlStateNormal];
+    [button setTitle:@"点击加载" forState:UIControlStateNormal];
     [button addTarget:self action:@selector(loadImageWithThread) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
 }
