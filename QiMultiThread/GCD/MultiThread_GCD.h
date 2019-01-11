@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@interface GCDImage : NSObject
+
+@property (nonatomic, assign) NSInteger index;
+@property (nonatomic, strong) NSData *imgData;
+
+@end
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface multiThread_GCD : UIViewController
+@interface MultiThread_GCD : UIViewController
 
 @end
 

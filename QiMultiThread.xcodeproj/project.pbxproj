@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		141F6EE921D0B62E00E337A7 /* multiThread_GCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 141F6EE821D0B62E00E337A7 /* multiThread_GCD.m */; };
+		141F6EE921D0B62E00E337A7 /* MultiThread_GCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 141F6EE821D0B62E00E337A7 /* MultiThread_GCD.m */; };
 		141F6EEF21D20EBB00E337A7 /* MyOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 141F6EEE21D20EBB00E337A7 /* MyOperation.m */; };
 		1453E52621BE77C50076ED24 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1453E52521BE77C50076ED24 /* AppDelegate.m */; };
 		1453E52921BE77C50076ED24 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1453E52821BE77C50076ED24 /* ViewController.m */; };
@@ -18,11 +18,12 @@
 		1453E53F21BE826B0076ED24 /* MultiThread_NSThread1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1453E53E21BE826B0076ED24 /* MultiThread_NSThread1.m */; };
 		1468810521CE20C9001BF511 /* MultiThread_NSOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1468810421CE20C9001BF511 /* MultiThread_NSOperation.m */; };
 		1468810821CE2B99001BF511 /* MultiThread_NSOperation1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1468810721CE2B99001BF511 /* MultiThread_NSOperation1.m */; };
+		14B260C921E83E6700892466 /* MultiThread_GCD1.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B260C821E83E6700892466 /* MultiThread_GCD1.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		141F6EE721D0B62E00E337A7 /* multiThread_GCD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = multiThread_GCD.h; sourceTree = "<group>"; };
-		141F6EE821D0B62E00E337A7 /* multiThread_GCD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = multiThread_GCD.m; sourceTree = "<group>"; };
+		141F6EE721D0B62E00E337A7 /* MultiThread_GCD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_GCD.h; sourceTree = "<group>"; };
+		141F6EE821D0B62E00E337A7 /* MultiThread_GCD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_GCD.m; sourceTree = "<group>"; };
 		141F6EEA21D0C2AD00E337A7 /* QiMultiThread.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QiMultiThread.entitlements; sourceTree = "<group>"; };
 		141F6EED21D20EBB00E337A7 /* MyOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOperation.h; sourceTree = "<group>"; };
 		141F6EEE21D20EBB00E337A7 /* MyOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOperation.m; sourceTree = "<group>"; };
@@ -43,6 +44,8 @@
 		1468810421CE20C9001BF511 /* MultiThread_NSOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_NSOperation.m; sourceTree = "<group>"; };
 		1468810621CE2B99001BF511 /* MultiThread_NSOperation1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_NSOperation1.h; sourceTree = "<group>"; };
 		1468810721CE2B99001BF511 /* MultiThread_NSOperation1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_NSOperation1.m; sourceTree = "<group>"; };
+		14B260C721E83E6700892466 /* MultiThread_GCD1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_GCD1.h; sourceTree = "<group>"; };
+		14B260C821E83E6700892466 /* MultiThread_GCD1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_GCD1.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +86,10 @@
 		143EB0C521CE1EEA00059001 /* GCD */ = {
 			isa = PBXGroup;
 			children = (
-				141F6EE721D0B62E00E337A7 /* multiThread_GCD.h */,
-				141F6EE821D0B62E00E337A7 /* multiThread_GCD.m */,
+				141F6EE721D0B62E00E337A7 /* MultiThread_GCD.h */,
+				141F6EE821D0B62E00E337A7 /* MultiThread_GCD.m */,
+				14B260C721E83E6700892466 /* MultiThread_GCD1.h */,
+				14B260C821E83E6700892466 /* MultiThread_GCD1.m */,
 			);
 			path = GCD;
 			sourceTree = "<group>";
@@ -205,8 +210,9 @@
 				1468810521CE20C9001BF511 /* MultiThread_NSOperation.m in Sources */,
 				1468810821CE2B99001BF511 /* MultiThread_NSOperation1.m in Sources */,
 				1453E52921BE77C50076ED24 /* ViewController.m in Sources */,
+				14B260C921E83E6700892466 /* MultiThread_GCD1.m in Sources */,
 				1453E53F21BE826B0076ED24 /* MultiThread_NSThread1.m in Sources */,
-				141F6EE921D0B62E00E337A7 /* multiThread_GCD.m in Sources */,
+				141F6EE921D0B62E00E337A7 /* MultiThread_GCD.m in Sources */,
 				1453E53C21BE7D950076ED24 /* MultiThread_NSThread.m in Sources */,
 				1453E53421BE77CE0076ED24 /* main.m in Sources */,
 				1453E52621BE77C50076ED24 /* AppDelegate.m in Sources */,

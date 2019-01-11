@@ -7,6 +7,8 @@
 //
 
 #import "ViewController.h"
+#import "MultiThread_GCD.h"
+#import "MultiThread_GCD1.h"
 #import "MultiThread_NSThread.h"
 #import "MultiThread_NSThread1.h"
 #import "MultiThread_NSOperation.h"
@@ -66,7 +68,8 @@ typedef NS_ENUM(NSInteger, MultiThreadType) {
             break;
         }
         case MultiThreadType_GCD: {
-            
+            MultiThread_GCD1 *gcd = [[MultiThread_GCD1 alloc] init];
+            [self.navigationController pushViewController:gcd animated:YES];
             break;
         }
         default:
