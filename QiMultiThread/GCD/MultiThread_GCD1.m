@@ -23,7 +23,7 @@ const static char *QiShareQueue = "QiShareQueue";
     [self.view setBackgroundColor:[UIColor whiteColor]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
-    [self asyncConcurrent];
+    [self deadLock];
 }
 
 - (void)addTask:(NSInteger)tag {
@@ -40,8 +40,11 @@ const static char *QiShareQueue = "QiShareQueue";
     [task resume];
 }
 
+
+#pragma mark - 串行/并发队列 + 同步/异步调用组合
+
 // 异步执行
-- (void)asyncConcurrent {
+- (void)asyncExecute {
     
     NSLog(@"currentThread--->> %@",[NSThread currentThread]);
     NSLog(@"asyncConcurrent--->> begin");
@@ -65,7 +68,7 @@ const static char *QiShareQueue = "QiShareQueue";
 }
 
 // 同步执行
-- (void)syncConcurrent {
+- (void)syncExecute {
     
     NSLog(@"currentThread--->> %@", [NSThread currentThread]);
     NSLog(@"syncConcurrent--->> begin");
@@ -89,13 +92,219 @@ const static char *QiShareQueue = "QiShareQueue";
 }
 
 
-// 线程间通信
-- (void)test {
+#pragma mark - dispatch_group
+
+-(void)dispatchGroupNotify {
+    
+    NSLog(@"currentThread: %@", [NSThread currentThread]);
+    NSLog(@"---start---");
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:2];
+        NSLog(@"groupTask_1");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:7];
+        NSLog(@"groupTask_2");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:4];
+        NSLog(@"groupTask_3");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+        NSLog(@"dispatch_group_Notify block end");
+    });
+    
+    NSLog(@"---end---");
+}
+
+-(void)dispatchGroupWait {
+    
+    NSLog(@"currentThread: %@", [NSThread currentThread]);
+    NSLog(@"---start---");
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:2];
+        NSLog(@"groupTask_1");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:7];
+        NSLog(@"groupTask_2");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    dispatch_group_async(group, queue, ^{
+        [NSThread sleepForTimeInterval:4];
+        NSLog(@"groupTask_3");
+        NSLog(@"currentThread: %@", [NSThread currentThread]);
+    });
+    
+    //在此设置了一个10秒的等待时间，如果group的执行结束没有到12秒那么就返回0
+    //如果执行group的执行时间超过了10秒，那么返回非0 数值，
+    //在使用dispatch_group_wait函数的时候，会阻塞当前线程，阻塞的时间 在wait函数时间值和当前group执行时间值取最小的。
+    long result = dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC));
+    NSLog(@"dispatch_group_wait result = %ld", result);
+    
+    NSLog(@"---end---");
+}
+
+-(void)dispatchGroupEnter {
+    
+    NSLog(@"currentThread: %@", [NSThread currentThread]);
+    NSLog(@"---start---");
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_group_enter(group);
+    dispatch_async(queue, ^{
+        [NSThread sleepForTimeInterval:7];
+        NSLog(@"asyncTask_1");
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_async(queue, ^{
+        [NSThread sleepForTimeInterval:4];
+        NSLog(@"asyncTask_2");
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        NSLog(@"dispatch_group_notify block end");
+    });
+    NSLog(@"---end---");
+}
+
+- (void)dispatchBlockWait {
+    
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_block_t block = dispatch_block_create(0, ^{
+        NSLog(@"---before---");
+        [NSThread sleepForTimeInterval:7];
+        NSLog(@"---after---");
+    });
+    dispatch_async(queue, block);
+    
+    dispatch_async(queue, ^{
+        long result = dispatch_block_wait(block, dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC));
+        NSLog(@"dispatch_block_wait result = %ld", result);
+    });
+}
+
+- (void)diapatchBarrier {
+    NSLog(@"currentThread: %@", [NSThread currentThread]);
+    NSLog(@"---start---");
+    
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue, ^{
+        [NSThread sleepForTimeInterval:7];
+        NSLog(@"asyncTask_1");
+    });
+    dispatch_async(queue, ^{
+        [NSThread sleepForTimeInterval:5];
+        NSLog(@"asyncTask_2");
+    });
+    dispatch_barrier_async(queue, ^{
+        NSLog(@"barrier_asyncTask");
+        [NSThread sleepForTimeInterval:3];
+        
+    });
+    dispatch_async(queue, ^{
+        [NSThread sleepForTimeInterval:1];
+        NSLog(@"asyncTask_4");
+    });
+    
+    NSLog(@"---end---");
+}
+
+- (void)dispatchBlockNotify {
+    
+    //dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_block_t preBlock = dispatch_block_create(0, ^{
+        NSLog(@"preBlock start");
+        [NSThread sleepForTimeInterval:2];
+        NSLog(@"preBlock end");
+    });
+    dispatch_async(queue, preBlock);
+    dispatch_block_t afterBlock = dispatch_block_create(0, ^{
+        NSLog(@"has been notifyed");
+    });
+    
+    dispatch_block_notify(preBlock, queue, afterBlock);
+}
+
+-(void)dispatchBlockCancel
+{
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_block_t block = dispatch_block_create(0, ^{
+        
+    });
+    dispatch_async(queue, block);
+    dispatch_block_cancel(block);
+}
+
+- (void) dispatchSet2 {
+    
+    NSLog(@"currentThread: %@", [NSThread currentThread]);
+    NSLog(@"---start---");
+    
+    dispatch_queue_t targetQueue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t queue1 = dispatch_queue_create("QiShareQueue_1", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t queue2 = dispatch_queue_create("QiShareQueue_2", DISPATCH_QUEUE_CONCURRENT);
     
     
+    dispatch_set_target_queue(queue1, targetQueue);
+    dispatch_set_target_queue(queue2, targetQueue);
+    
+    dispatch_async(queue1, ^{
+        [NSThread sleepForTimeInterval:5];
+        NSLog(@"Task_1");
+        
+    });
+    dispatch_async(queue2, ^{
+        [NSThread sleepForTimeInterval:3];
+        NSLog(@"Task_2");
+        
+    });
+    dispatch_async(queue2, ^{
+        [NSThread sleepForTimeInterval:1];
+        NSLog(@"Task_3");
+        
+    });
+    
+    NSLog(@"---end---");
 }
 
 
-@end
+- (void)deadLock {
+    
+    dispatch_queue_t queue = dispatch_queue_create("QiShareQueue", DISPATCH_QUEUE_SERIAL);
+    
+    NSLog(@"1");
+    dispatch_async(queue, ^{
+        NSLog(@"2");
+        
+        dispatch_sync(queue, ^{
+            NSLog(@"3");
+        });
+    });
+    NSLog(@"4");
+}
 
+
+
+@end
 
