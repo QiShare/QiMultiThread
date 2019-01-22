@@ -13,11 +13,13 @@
 #import "MultiThread_NSThread1.h"
 #import "MultiThread_NSOperation.h"
 #import "MultiThread_NSOperation1.h"
+#import "MultiThread_ThreadSafe.h"
 
 typedef NS_ENUM(NSInteger, MultiThreadType) {
     MultiThreadType_NSThread = 100,
     MultiThreadType_NSOperation,
     MultiThreadType_GCD,
+    MultiThreadType_ThreadSafe,
 };
 
 @interface ViewController ()
@@ -37,7 +39,7 @@ typedef NS_ENUM(NSInteger, MultiThreadType) {
     CGFloat offset = 100;
     CGFloat btnHeight = 45;
     CGSize size = self.view.frame.size;
-    NSArray *titles = [NSArray arrayWithObjects:@"NSThread", @"NSOperation", @"GCD", nil];
+    NSArray *titles = [NSArray arrayWithObjects:@"NSThread", @"NSOperation", @"GCD", @"ThreadSafe", nil];
     for (int i=0; i<titles.count; i++) {
         
         NSString *title = [titles objectAtIndex:i];
@@ -70,6 +72,11 @@ typedef NS_ENUM(NSInteger, MultiThreadType) {
         case MultiThreadType_GCD: {
             MultiThread_GCD1 *gcd = [[MultiThread_GCD1 alloc] init];
             [self.navigationController pushViewController:gcd animated:YES];
+            break;
+        }
+        case MultiThreadType_ThreadSafe: {
+            MultiThread_ThreadSafe *threadSafe = [[MultiThread_ThreadSafe alloc] init];
+            [self.navigationController pushViewController:threadSafe animated:YES];
             break;
         }
         default:

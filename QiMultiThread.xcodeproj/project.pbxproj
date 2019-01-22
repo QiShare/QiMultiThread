@@ -18,6 +18,7 @@
 		1453E53F21BE826B0076ED24 /* MultiThread_NSThread1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1453E53E21BE826B0076ED24 /* MultiThread_NSThread1.m */; };
 		1468810521CE20C9001BF511 /* MultiThread_NSOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1468810421CE20C9001BF511 /* MultiThread_NSOperation.m */; };
 		1468810821CE2B99001BF511 /* MultiThread_NSOperation1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1468810721CE2B99001BF511 /* MultiThread_NSOperation1.m */; };
+		148515B121F6BA8D000CD4B1 /* MultiThread_ThreadSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 148515B021F6BA8D000CD4B1 /* MultiThread_ThreadSafe.m */; };
 		14B260C921E83E6700892466 /* MultiThread_GCD1.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B260C821E83E6700892466 /* MultiThread_GCD1.m */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,8 @@
 		1468810421CE20C9001BF511 /* MultiThread_NSOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_NSOperation.m; sourceTree = "<group>"; };
 		1468810621CE2B99001BF511 /* MultiThread_NSOperation1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_NSOperation1.h; sourceTree = "<group>"; };
 		1468810721CE2B99001BF511 /* MultiThread_NSOperation1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_NSOperation1.m; sourceTree = "<group>"; };
+		148515AF21F6BA8D000CD4B1 /* MultiThread_ThreadSafe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_ThreadSafe.h; sourceTree = "<group>"; };
+		148515B021F6BA8D000CD4B1 /* MultiThread_ThreadSafe.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_ThreadSafe.m; sourceTree = "<group>"; };
 		14B260C721E83E6700892466 /* MultiThread_GCD1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiThread_GCD1.h; sourceTree = "<group>"; };
 		14B260C821E83E6700892466 /* MultiThread_GCD1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiThread_GCD1.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -117,6 +120,7 @@
 				143EB0C421CE1EC000059001 /* NSOperation */,
 				143EB0C321CE1E8900059001 /* NSThread */,
 				143EB0C521CE1EEA00059001 /* GCD */,
+				148515AE21F6B9BF000CD4B1 /* Lock */,
 				1453E52421BE77C50076ED24 /* AppDelegate.h */,
 				1453E52521BE77C50076ED24 /* AppDelegate.m */,
 				1453E52721BE77C50076ED24 /* ViewController.h */,
@@ -127,6 +131,15 @@
 				1453E52F21BE77CE0076ED24 /* LaunchScreen.storyboard */,
 			);
 			path = QiMultiThread;
+			sourceTree = "<group>";
+		};
+		148515AE21F6B9BF000CD4B1 /* Lock */ = {
+			isa = PBXGroup;
+			children = (
+				148515AF21F6BA8D000CD4B1 /* MultiThread_ThreadSafe.h */,
+				148515B021F6BA8D000CD4B1 /* MultiThread_ThreadSafe.m */,
+			);
+			path = Lock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,6 +224,7 @@
 				1468810821CE2B99001BF511 /* MultiThread_NSOperation1.m in Sources */,
 				1453E52921BE77C50076ED24 /* ViewController.m in Sources */,
 				14B260C921E83E6700892466 /* MultiThread_GCD1.m in Sources */,
+				148515B121F6BA8D000CD4B1 /* MultiThread_ThreadSafe.m in Sources */,
 				1453E53F21BE826B0076ED24 /* MultiThread_NSThread1.m in Sources */,
 				141F6EE921D0B62E00E337A7 /* MultiThread_GCD.m in Sources */,
 				1453E53C21BE7D950076ED24 /* MultiThread_NSThread.m in Sources */,

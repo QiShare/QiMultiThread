@@ -20,8 +20,8 @@ const static char *QiShareQueue = "QiShareQueue";
     
     [super viewDidLoad];
     [self setTitle:@"GCD1"];
-    [self.view setBackgroundColor:[UIColor whiteColor]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.view setBackgroundColor:[UIColor whiteColor]];
     
     [self deadLock];
 }

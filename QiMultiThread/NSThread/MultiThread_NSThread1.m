@@ -31,8 +31,8 @@
     
     [super viewDidLoad];
     [self setTitle:@"NSThread1"];
-    [self.view setBackgroundColor:[UIColor whiteColor]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.view setBackgroundColor:[UIColor whiteColor]];
     
     [self layoutViews];
 }
