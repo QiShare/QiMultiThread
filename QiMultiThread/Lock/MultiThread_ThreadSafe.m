@@ -16,15 +16,14 @@
 //! 票数
 @property (nonatomic, assign) NSInteger ticketCount;
 @property (nonatomic, strong) NSMutableArray *ticketsArr;
-
-
+//! NSLock
 @property (nonatomic, strong) NSLock *lock;
-
+//! 信号量semaphore
 @property (nonatomic, strong) dispatch_semaphore_t semaphore;
-
+//! 条件锁
 @property (nonatomic, strong) NSCondition *condition;
 @property (nonatomic, strong) NSConditionLock *conditionLock;
-
+//! 递归锁
 @property (nonatomic, strong) NSRecursiveLock *recursiveLock;
 
 @end
@@ -38,11 +37,13 @@
     self.edgesForExtendedLayout = UIRectEdgeNone;
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
+    // 实例化各种锁
     _lock = [[NSLock alloc] init];
     _semaphore = dispatch_semaphore_create(1);
     _condition = [[NSCondition alloc] init];
     _ticketsArr = [NSMutableArray array];
     _conditionLock = [[NSConditionLock alloc] initWithCondition:CONDITION_NO_DATA];
+    _recursiveLock = [[NSRecursiveLock alloc] init];
     
     _ticketCount = 30;
     [self multiThread];
@@ -52,60 +53,80 @@
     
     dispatch_queue_t queue = dispatch_queue_create("QiMultiThreadSafeQueue", DISPATCH_QUEUE_CONCURRENT);
     
-//    for (NSInteger i=0; i<10; i++) {
+    for (NSInteger i=0; i<10; i++) {
         dispatch_async(queue, ^{
-            [self testNSRecursiveLock:10];
+            [self testNSConditionLockAdd];
         });
-//    }
-    
-//    for (NSInteger i=0; i<10; i++) {
-//        dispatch_async(queue, ^{
-//            [self testNSConditionLockRemove];
-//        });
-//    }
+    }
+
+    for (NSInteger i=0; i<10; i++) {
+        dispatch_async(queue, ^{
+            [self testNSConditionLockRemove];
+        });
+    }
 }
 
 
-
+#pragma mark - NSLock
 
 - (void)testNSLock {
     
-    [_lock lock];
-    
-    if (_ticketCount > 0) {
-        
-        [NSThread sleepForTimeInterval:0.2];
-        
-        _ticketCount --;
-        NSLog(@"--->> %@卖了一张票，还剩%ld张", [NSThread currentThread], (long)_ticketCount);
+    while (1) {
+        [_lock lock];
+        if (_ticketCount > 0) {
+            _ticketCount --;
+            NSLog(@"--->> %@已购票1张，剩余%ld张", [NSThread currentThread], (long)_ticketCount);
+        }
+        else {
+            [_lock unlock];
+            return;
+        }
+        [_lock unlock];
+        sleep(0.2);
     }
-    
-    [_lock unlock];
 }
 
-- (void)testDispatchSemaphore {
+
+#pragma mark - dispatch_semaphore
+
+- (void)testDispatchSemaphore:(NSInteger)num {
     
-    // 注意：_semaphore：信号量；DISPATCH_TIME_FOREVER超时时间；返回值
-    dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
-    
-    if (_ticketCount > 0) {
+    while (1) {
+        // 参数1为信号量；参数2为超时时间；ret为返回值
+        //dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
+        long ret = dispatch_semaphore_wait(_semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.21*NSEC_PER_SEC)));
+        if (ret == 0) {
+            if (_ticketCount > 0) {
+                NSLog(@"%d 窗口 卖了第%d张票", (int)num, (int)_ticketCount);
+                _ticketCount --;
+            }
+            else {
+                dispatch_semaphore_signal(_semaphore);
+                NSLog(@"%d 卖光了", (int)num);
+                break;
+            }
+            [NSThread sleepForTimeInterval:0.2];
+            dispatch_semaphore_signal(_semaphore);
+        }
+        else {
+            NSLog(@"%d %@", (int)num, @"超时了");
+        }
         
         [NSThread sleepForTimeInterval:0.2];
-        
-        _ticketCount --;
-        NSLog(@"--->> %@卖了一张票，还剩%ld张", [NSThread currentThread], (long)_ticketCount);
     }
-    
-    dispatch_semaphore_signal(_semaphore);
 }
+
+
+#pragma mark - NSCondition
 
 - (void)testNSConditionAdd {
     
     [_condition lock];
     
+    // 生产数据
     NSObject *object = [NSObject new];
     [_ticketsArr addObject:object];
-    NSLog(@"---->>%@ add", [NSThread currentThread]);
+    NSLog(@"--->>%@ add", [NSThread currentThread]);
     [_condition signal];
     
     [_condition unlock];
@@ -115,16 +136,19 @@
     
     [_condition lock];
     
+    // 消费数据
     if (!_ticketsArr.count) {
-        NSLog(@"---->> wait");
+        NSLog(@"--->> wait");
         [_condition wait];
     }
     [_ticketsArr removeObjectAtIndex:0];
-    NSLog(@"---->>%@ remove", [NSThread currentThread]);
+    NSLog(@"--->>%@ remove", [NSThread currentThread]);
     
     [_condition unlock];
 }
 
+
+#pragma mark - NSConditionLock
 
 - (void)testNSConditionLockAdd {
     
@@ -134,7 +158,7 @@
     // 生产数据
     NSObject *object = [NSObject new];
     [_ticketsArr addObject:object];
-    NSLog(@"---->>%@ add", [NSThread currentThread]);
+    NSLog(@"--->>%@ add", [NSThread currentThread]);
     [_condition signal];
     
     // 有数据，解锁并设置条件
@@ -148,16 +172,18 @@
     
     // 消费数据
     if (!_ticketsArr.count) {
-        NSLog(@"---->> wait");
+        NSLog(@"--->>wait");
         [_condition wait];
     }
     [_ticketsArr removeObjectAtIndex:0];
-    NSLog(@"---->>%@ remove", [NSThread currentThread]);
+    NSLog(@"--->>%@ remove", [NSThread currentThread]);
     
     //3. 没有数据，解锁并设置条件
     [_conditionLock unlockWithCondition:CONDITION_NO_DATA];
 }
 
+
+#pragma mark - NSRecursiveLock
 
 - (void)testNSRecursiveLock:(NSInteger)tag {
     
@@ -165,28 +191,24 @@
     
     if (tag > 0) {
         
-        [NSThread sleepForTimeInterval:0.2];
-        
         [self testNSRecursiveLock:tag - 1];
-        NSLog(@"---->> %ld", (long)tag);
+        NSLog(@"--->> %ld", (long)tag);
     }
     
     [_recursiveLock unlock];
 }
 
-- (void)NSConditionLock {
-    
-}
+
+#pragma mark - @synchronized
 
 - (void)testSynchronized {
     
     @synchronized (self) {
+        
         if (_ticketCount > 0) {
             
-            [NSThread sleepForTimeInterval:0.2];
-            
             _ticketCount --;
-            NSLog(@"--->> %@卖了一张票，还剩%ld张", [NSThread currentThread], (long)_ticketCount);
+            NSLog(@"--->> %@已购票1张，剩余%ld张", [NSThread currentThread], (long)_ticketCount);
         }
     }
 }
